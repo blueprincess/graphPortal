@@ -1,0 +1,162 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Using SDL: Events</title>
+</head>
+
+<body bgcolor="#FFF8DC" text="#000000">
+<TABLE>
+<TR><!--#include file="../menu.tmpl" -->
+<TD>
+
+<p align="center">
+[<a href="usingvideofr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usingsoundfr.html">Suivante</a>]
+</p>
+
+<h1><font color="#8B0000">Utiliser l'API Simple DirectMedia Layer</font></h1>
+
+<h2>Evènements </h2>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Attendre un évènement</strong></li>
+        </ul>
+        <blockquote>
+            <p>Pour attendre un évènement utiliser la fonction SDL_WaitEvent().</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="300" bgcolor="#D3D3D3"><b>Astuce:</b><br>
+        SDL possède un support universel des claviers, transformant le scancode
+		de l'évènement et plçant son équivalent dans event.key.keysym.unicode.
+		Ce traitement réclame d'activer l'UNICODE en appelant SDL_EnableUNICODE().
+		 
+		</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:
+        </strong><pre>
+{
+    SDL_Event event;
+
+    SDL_WaitEvent(&amp;event);
+
+    <font color="#0000FF">switch</font> (event.type) {
+        <font color="#0000FF">case</font> SDL_KEYDOWN:
+            printf(&quot;<font color="#000000">La touche %s a été préssée!\n</font>&quot;,
+                   SDL_GetKeyName(event.key.keysym.sym));
+            break;
+        <font color="#0000FF">case</font> SDL_QUIT:
+            exit(0);
+    }
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Questionner la file d'évènements.</strong> </li>
+        </ul>
+        <blockquote>
+            <p>Utiliser pour cela la fonction SDL_PollEvent().</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="300" bgcolor="#D3D3D3"><b>Astuce:</b><br>
+        Vous pouvez "jeter un coup d'oeil" aux évènements de la file
+		d'évènements sans les enlever en passant SDL_PEEKEVENT comme paramètre
+		de SDL_PeepEvents().</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:
+        </strong><pre>
+{
+    SDL_Event event;
+
+    <font color="#0000FF">while</font> ( SDL_PollEvent(&amp;event) ) {
+        <font color="#0000FF">switch</font> (event.type) {
+            <font color="#0000FF">case</font> SDL_MOUSEMOTION:
+                printf(&quot;<font color="#000000">La souris a bougé de %d,%d à (%d,%d)\n</font>&quot;, 
+                       event.motion.xrel, event.motion.yrel,
+                       event.motion.x, event.motion.y);
+                break;
+            <font color="#0000FF">case</font> SDL_MOUSEBUTTONDOWN:
+                printf(&quot;<font color="#000000">Le bouton %d de la souris a été préssé en (%d,%d)\n</font>&quot;,
+                       event.button.button, event.button.x, event.button.y);
+                break;
+            <font color="#0000FF">case</font> SDL_QUIT:
+                exit(0);
+        }
+    }
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>S'interroger sur l'état d'un évènement</strong></li>
+        </ul>
+        <blockquote>
+            <p>Afin de manipuler les évènements directement, chaque type
+			d'évènement à une fonction qui vous permet de contrôler
+			l'état d'une application. Si vous utilisez exclusivement ce système,
+			vous pouvez ignorer tous les évènements grâce à SDL_EventState(),
+			et appeler périodiquement SDL_PumpEvents() pour mettre à jour
+			l'état de votre application.</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="300" bgcolor="#D3D3D3"><b>Astuce:</b><br>
+        Vous pouvez cacher ou montrer le curseur de votre souris en utilisant
+		SDL_ShowCursor().</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:
+        </strong><pre>
+{
+    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+}
+
+<font color="#008000">void</font> CheckMouseHover(void)
+{
+    <font color="#008000">int</font> mouse_x, mouse_y;
+
+    SDL_PumpEvents();
+
+    SDL_GetMouseState(&amp;mouse_x, &amp;mouse_y);
+    <font color="#0000FF">if</font> ( (mouse_x &lt; 32) &amp;&amp; (mouse_y &lt; 32) ) {
+        printf(&quot;<font color="#000000">La souris est en haut à gauche!\n</font>&quot;);
+    }
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<p align="center">
+[<a href="usingvideofr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usingsoundfr.html">Suivante</a>]
+</p>
+
+</TABLE>
+</body>
+</html>

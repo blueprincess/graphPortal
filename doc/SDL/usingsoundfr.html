@@ -1,0 +1,184 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Using SDL: Sound</title>
+</head>
+
+<body bgcolor="#FFF8DC" text="#000000">
+<TABLE>
+<TR><!--#include file="../menu.tmpl" -->
+<TD>
+
+<p align="center">
+[<a href="usingeventsfr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usingcdromfr.html">Suivante</a>]
+</p>
+
+<h1><font color="#8B0000">Utiliser l'API Simple DirectMedia Layer</font></h1>
+
+<h2>Son</h2>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Ouvrir le contexte de de périphérique audio</strong> </li>
+        </ul>
+        <blockquote>
+            <p>Vous devez avoir écrit une fonction de rappel qui mixte
+			vos données audios et les placent dans le flux audio.
+			Après ça, choisissez le format et le taux audio, et ouvrez
+			le contexte de périphérique audio.</p>
+            <p>Le son ne sera pas joué tant que vous n'aurez pas appelé SDL_PauseAudio(0),
+			vous permettant d'exécuter d'autres initialisations audio avant que votre
+			fonction de rappel ne soit exécutée.Vous dévez refermer le contexte après son
+			utilisation par SDL_CloseAudio().</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><b>Astuce:</b><br>
+        Si votre application peut manipuler différents formats audio, 
+		passer un second pointeur SDL_AudioSpec à SDL_OpenAudio() afin
+		de récupérer le format audio actuel du matériel. Si vous laissez 
+		ce second pointeur à NULL, les données audio seront converties au format
+		audio du matériel à l'exécution.</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:
+        </strong><pre>
+<font color="#0000FF">#include</font> &quot;<font color="#000000">SDL.h</font>&quot;
+<font color="#0000FF">#include</font> &quot;<font color="#000000">SDL_audio.h</font>&quot;
+{
+    extern <font color="#008000">void</font> mixaudio(<font
+color="#008000">void *</font>unused, <font color="#008000">Uint8 *</font>stream, <font
+color="#008000">int</font> len);
+    SDL_AudioSpec fmt;
+
+    <font color="#FF0000">/* Un son sereo de 16 bits à 22kHz */</font>
+    fmt.freq = 22050;
+    fmt.format = AUDIO_S16;
+    fmt.channels = 2;
+    fmt.samples = 512;        <font color="#FF0000">/*Une bonne valeur pour les jeux */</font>
+    fmt.callback = mixaudio;
+    fmt.userdata = NULL;
+
+    <font color="#FF0000">/* Ouvre le contexte audio et joue le son */</font>
+    <font color="#0000FF">if</font> ( SDL_OpenAudio(&amp;fmt, NULL) &lt; 0 ) {
+        fprintf(stderr, &quot;<font color="#000000">Impossible d'accéder à l'audio: %s\n</font>&quot;, SDL_GetError());
+        exit(1);
+    }
+    SDL_PauseAudio(0);
+
+    ...
+
+    SDL_CloseAudio();
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Charger et jouer un son</strong></li>
+        </ul>
+        <blockquote>
+            <p>SDL vous fournie une unique routine de chargement, SDL_LoadWAV().
+			Après avoir charger votre son, vous devez le convertir au bon format
+			audio en utilisant SDL_ConvertAudio().</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><b>Astuce:</b><br>
+        SDL est une API de bas niveau dans la gestion de l'audio. Un exemple complet
+		d'une telle implémentation existe sous licence LGPL, et peut être trouvée
+		dans les archives des démos SDL.</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Example</strong></font><strong>:</strong>
+        <pre>
+<font color="#0000FF">#define</font> NUM_SOUNDS 2
+<font color="#0000FF">struct</font> sample {
+    <font color="#008000">Uint8 *</font>data;
+    <font color="#008000">Uint32</font> dpos;
+    <font color="#008000">Uint32</font> dlen;
+} sounds[NUM_SOUNDS];
+
+<font color="#008000">void</font> mixaudio(<font color="#008000">void *</font>unused, <font
+color="#008000">Uint8 *</font>stream, <font color="#008000">int</font> len)
+{
+    <font color="#008000">int</font> i;
+    <font color="#008000">Uint32</font> amount;
+
+    <font color="#0000FF">for</font> ( i=0; i&lt;NUM_SOUNDS; ++i ) {
+        amount = (sounds[i].dlen-sounds[i].dpos);
+        <font color="#0000FF">if</font> ( amount &gt; len ) {
+            amount = len;
+        }
+        SDL_MixAudio(stream, &amp;sounds[i].data[sounds[i].dpos], amount, SDL_MIX_MAXVOLUME);
+        sounds[i].dpos += amount;
+    }
+}
+
+<font color="#008000">void</font> PlaySound(<font color="#008000">char *</font>file)
+{
+    <font color="#008000">int</font> index;
+    SDL_AudioSpec wave;
+    <font color="#008000">Uint8 *</font>data;
+    <font color="#008000">Uint32</font> dlen;
+    SDL_AudioCVT cvt;
+
+    <font color="#FF0000">/* Look for an empty (or finished) sound slot */</font>
+    <font color="#0000FF">for</font> ( index=0; index&lt;NUM_SOUNDS; ++index ) {
+        <font color="#0000FF">if</font> ( sounds[index].dpos == sounds[index].dlen ) {
+            break;
+        }
+    }
+    <font color="#0000FF">if</font> ( index == NUM_SOUNDS )
+        return;
+
+    <font color="#FF0000">/* Load the sound file and convert it to 16-bit stereo at 22kHz */</font>
+    <font color="#0000FF">if</font> ( SDL_LoadWAV(file, &amp;wave, &amp;data, &amp;dlen) == NULL ) {
+        fprintf(stderr, &quot;<font color="#000000">Couldn't load %s: %s\n</font>&quot;, file, SDL_GetError());
+        return;
+    }
+    SDL_BuildAudioCVT(&amp;cvt, wave.format, wave.channels, wave.freq,
+                            AUDIO_S16,   2,             22050);
+    cvt.buf = malloc(dlen*cvt.len_mult);
+    memcpy(cvt.buf, data, dlen);
+    cvt.len = dlen;
+    SDL_ConvertAudio(&amp;cvt);
+    SDL_FreeWAV(data);
+
+    <font color="#FF0000">/* Put the sound data in the slot (it starts playing immediately) */</font>
+    <font color="#0000FF">if</font> ( sounds[index].data ) {
+        free(sounds[index].data);
+    }
+    SDL_LockAudio();
+    sounds[index].data = cvt.buf;
+    sounds[index].dlen = cvt.len_cvt;
+    sounds[index].dpos = 0;
+    SDL_UnlockAudio();
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<p align="center">
+[<a href="usingeventsfr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usingcdromfr.html">Suivante</a>]
+</p>
+
+</TABLE>
+</body>
+</html>

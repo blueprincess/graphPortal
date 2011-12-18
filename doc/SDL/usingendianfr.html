@@ -1,0 +1,110 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Using SDL: Endian Independence</title>
+</head>
+
+<body bgcolor="#FFF8DC" text="#000000">
+<TABLE>
+<TR><!--#include file="../menu.tmpl" -->
+<TD>
+
+<p align="center">
+[<a href="usingtimersfr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font></a>
+</p>
+
+<h1><font color="#8B0000">Utiliser l'API Simple DirectMedia Layer</font></h1>
+
+<h2>Endian independence</h2>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Determiner le système d'ordre des bits courant.</strong></li>
+        </ul>
+        <blockquote>
+            <p>Le préprocesseur du C défini SDL_BYTEORDER qui est soit
+			SDL_LIL_ENDIAN soit SDL_BIG_ENDIAN, dépendant de l'ordre de codage 
+			des bits du système.</p>
+            <p>Un système "petit indien" qui désire écrire des données les présente comme ceci :
+            <br> &nbsp;&nbsp;&nbsp;&nbsp;  [lo-bytes] [hi-bytes] <br>       
+			Un système "grand indien" qui désire écrire des données les présente comme ceci :
+            <br> &nbsp;&nbsp;&nbsp;&nbsp;  [hi-bytes] [lo-bytes] <br>
+            </p>
+        </blockquote>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><strong>Astuce:</strong><br>
+        Les systèmes x86 sont "petit indien" et les sysèmes ppc sont "grand indien".</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:</strong>
+        <pre>
+<font color="#0000FF">#include</font> &quot;<font color="#000000">SDL_endian.h</font>&quot;
+
+<font color="#0000FF">#if</font> SDL_BYTEORDER == SDL_LIL_ENDIAN
+<font color="#0000FF">#define</font> SWAP16(X)    (X)
+<font color="#0000FF">#define</font> SWAP32(X)    (X)
+<font color="#0000FF">#else</font>
+<font color="#0000FF">#define</font> SWAP16(X)    SDL_Swap16(X)
+<font color="#0000FF">#define</font> SWAP32(X)    SDL_Swap32(X)
+<font color="#0000FF">#endif</font>
+</pre>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Permuter les données de différents systemes d'ordre de bits.</strong></li>
+        </ul>
+        <blockquote>
+            <p>SDL fournie un lot de macros performantes dans SDL_endian.h,
+			SDL_Swap16() et SDL_Swap32(), qui change l'ordre des bits pour vous.
+			On trouve aussi des macros qui permutent les données d'un ordre
+			de bits particulier vers le système "indien" local.</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><strong>Astuce:</strong><br>
+        Si vous désirez simplement connaître le système de rangement des bits actuel,
+		mais ne désirez pas toutes les fonctions de swap, incluez simplement
+		SDL_byteorder.h au lieu de SDL_endian.h</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:
+        </strong><pre>
+<font color="#0000FF">#include</font> &quot;<font color="#000000">SDL_endian.h</font>&quot;
+
+<font color="#008000">void</font> ReadScanline16(FILE *file, <font
+color="#008000">Uint16 *</font>scanline, <font color="#008000">int</font> length)
+{
+    fread(scanline, length, sizeof(Uint16), file);
+    <font color="#0000FF">if</font> ( SDL_BYTEORDER == SDL_BIG_ENDIAN ) {
+        <font color="#008000">int</font> i;
+        <font color="#0000FF">for</font> ( i=length-1; i &gt;= 0; --i )
+            scanline[i] = SDL_SwapLE16(scanline[i]);
+    }
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<p align="center">
+[<a href="usingtimersfr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font></a>
+</p>
+
+</TABLE>
+</body>
+</html>

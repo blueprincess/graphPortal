@@ -1,0 +1,89 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>SDL: What Platforms Does It Run On?</title>
+</head>
+
+<body bgcolor="#FFF8DC" text="#000000">
+<TABLE>
+<TR><!--#include file="../menu.tmpl" -->
+<TD>
+
+<p align="center">
+[<a href="whatcanitdofr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usinginitfr.html">Suivante</a>]
+</p>
+
+<h1><font color="#8B0000">Sur quelles plateformes fonctionne SDL ?</font></h1>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><strong>Linux</strong><ul>
+            <li>SDL utilise X11 pour l'affichage vidéo, tirant avantage
+				de l'extension DGA d'XFree86, et de la nouvelle accélération
+				MTRR pour l'affichage en plein écran.</li>
+            <li>SDL utilise l'API OSS pour l'audio. </li>
+            <li>Les Threads son implémentés en utilisant soit l'appel au 
+				système clone() et SysV IPC, soit à la glibc-2.1 pthreads.</li>
+        </ul>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><b>Astuce:</b>
+        <br>
+        You can get at the hidden portions of the SDL driver
+        interface via the SDL_GetWMInfo() function. This allows
+        you to do things like remove window decorations and
+        programmatically iconify your window. 
+		</td>
+    </tr>
+    <tr>
+        <td valign="top"><strong>Win32</strong><ul>
+            <li>Deux versions, une utilisable sur tous les systèmes basés
+				sur l'API Win32, et une autre plus performante, basée sur
+				l'API DirectX.</li>
+            <li>La première version utilise les GDI pour l'affichage vidéo.
+				L'autre version utilise DirectDraw pour l'affichage vidéo,
+				prenant avantage de l'accélération matérielle si elle existe.
+				</li>
+            <li>La première version utilise l'API waveOut pour le son. 
+				La seconde emploi DirectSound pour ce faire.</li>
+        </ul>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><b>Astuce:</b>
+        <br>Vous devez appeler périodiquement la fonction d'évènement de SDL
+		depuis votre thread principal, pour garder votre application sensible
+		 et ré-actualiser la file des messages de Windows.</td>
+    </tr>
+    <tr>
+        <td valign="top"><strong>BeOS</strong><ul>
+            <li>BWindow est utilisée pour l'affichage vidéo. </li>
+            <li>L'API BSoundPlayer est utilisée pour la gestion du son.</li>
+        </ul>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><b>Astuce:</b>
+        <br>Linux et BeOS supportent le drapeau SDL_INIT_EVENTTHREAD qui,
+		quand il est passé à SDL_Init(), demande à la boucle d'évènements d'être
+		asynchrone et de s'éxécuter dans un autre thread. Ceci est utile,par exemple, pour 
+		les curseurs colorés qui répondent même quand l'application est occupée.</td>
+    </tr>
+    <tr>
+        <td valign="top"><strong>Portages non-officiels et portages en développements.</strong><ul>
+            <li>Solaris, IRIX, FreeBSD </li>
+            <li>MacOS </li>
+        </ul>
+        </td>
+    </tr>
+</table>
+
+<p align="center">
+[<a href="whatcanitdofr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usinginitfr.html">Suivante</a>]
+</p>
+
+</TABLE>
+</body>
+</html>

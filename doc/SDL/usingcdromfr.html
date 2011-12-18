@@ -1,0 +1,133 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>Using SDL: the CD-ROM</title>
+</head>
+
+<body bgcolor="#FFF8DC" text="#000000">
+<TABLE>
+<TR><!--#include file="../menu.tmpl" -->
+<TD>
+
+<p align="center">
+[<a href="usingsoundfr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usingthreadsfr.html">Suivante</a>]
+</p>
+
+<h1><font color="#8B0000">Utiliser l'API Simple DirectMedia Layer</font></h1>
+
+<h2>CD-ROM audio </h2>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Accéder à un lecteur de CD-ROM</strong> </li>
+        </ul>
+        <blockquote>
+            <p>Vous pouvez combien de lecteurs de CD-ROM existent sur les système
+			grâce à la fonction SDL_CDNumDrives(), et accéder à l'un d'entre eux 
+			avec SDL_CDOpen().</p>
+            <p>Le lecteur 0 est le lecteur par défaut sur le système. Le lecteur
+			de CD-ROM peut être ouvert même si il ne contient aucun disque.</p>
+            <p>Vous devriez  utiliser la fonction SDL_CDStatus() afin de déterminer
+			l'état du lecteur de CD-ROM. Après avoir utilisé le lecteur vous 
+			devez le fermer avec SDL_CDClose().</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><strong>Astuce:</strong><br>
+        Vous pouvez récupérer le nom du lecteur de CD-ROM au sein du système, en 
+		utilisant le fonction SDL_CDName().</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:
+        </strong><pre>
+{
+    SDL_CD *cdrom;
+
+    <font color="#0000FF">if</font> ( SDL_CDNumDrives() &gt; 0 ) {
+        cdrom = SDL_CDOpen(0);
+        <font color="#0000FF">if</font> ( cdrom == NULL ) {
+            fprintf(stderr, &quot;<font color="#000000">Impossible d'ouvrir le lecteur de CD-ROM par défaut %s\n</font>&quot; SDL_GetError());
+            return;
+        }
+
+        ...
+
+        SDL_CDClose(cdrom);
+    }
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="4">
+    <tr>
+        <td valign="top"><ul>
+            <li><strong>Utiliser un lecteur de CD-ROM </strong></li>
+        </ul>
+        <blockquote>
+            <p>Le temps spécifié par les lecteurs de CD-ROM est soit au format
+			MSF (min/sec/frame) ou directement en "frames". Un frame est une unité
+			standard de temps sur les CDs, il correspond à 1/75 d'une seconde.
+			SDL utilise les frames au lieu du format MSF pour afficher la durée 
+			et la plage d'un CD, mais vous pouvez les convertir grâce aux macros :
+			FRAMES_TO_MSF() et MSF_TO_FRAMES().
+			</p>
+            <p>SDL ne remet pas à jour l'information sur les pistes dans
+			la structure SDL_CD tant que vous n'appelez pas SDL_CDStatus(), donc
+			vous devriez toujours l'appeler pour vérifier que le lecteur contient
+			bien un CD, et déterminer ainsi quelles sont les pistes du CD avant de le jouer.
+			Notez que l'index des pistes démarre à 0 pour la première piste.</p>
+            <p>SDL possède deux fonctions pour jouer un CD. Vous pouvez soit utiliser
+			SDL_CDPlayTracks() pour jouer une piste précise, soit utiliser
+			SDL_CDPlay() et jouer l'ensemble du CD.</p>
+            <p>SDL ne notifie pas automatiquement l'insertion d'un CD ou qu'un CD est fini.
+			Vous devez donc vérifier l'état du lecteur périodiquement avec
+			SDL_CDStatus(). Puisque cet appel lit la table des matières du CD, il
+			ne devrait pas être appelé continuellement en une boucle hermétique.</p>
+        </blockquote>
+        </td>
+        <td valign="top" width="200" bgcolor="#D3D3D3"><strong>Astuce:</strong><br>
+		Vous pouvez déterminer quelles pistes sont des pistes audios et quelles pistes
+		sont des pistes de données, en regardant 
+		cdrom-&gt;tracks[track].type, et 
+		en le comparant aux SDL_AUDIO_TRACK et SDL_DATA_TRACK.</td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="50">
+    <tr>
+        <td valign="top"><font color="#000080"><strong>Exemple</strong></font><strong>:
+        </strong><pre>
+<font color="#008000">void</font> JouerPiste(SDL_CD *cdrom, <font
+color="#008000">int</font> piste)
+{
+    <font color="#0000FF">if</font> ( CD_INDRIVE(SDL_CDStatus(cdrom)) ) {
+        SDL_CDPlayTracks(cdrom, piste, 0, piste+1, 0);
+    }
+    <font color="#0000FF">while</font> ( SDL_CDStatus(cdrom) == CD_PLAYING ) {
+        SDL_Delay(1000);
+    }
+}
+</pre>
+        </td>
+    </tr>
+</table>
+
+<p align="center">
+[<a href="usingsoundfr.html">Précédente</a>]
+<a href="tocfr.html"><font color="#8B0000">Table Des Matières</font> </a>
+[<a href="usingthreadsfr.html">Suivante</a>]
+</p>
+
+</TABLE>
+</body>
+</html>
