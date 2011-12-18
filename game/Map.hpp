@@ -8,11 +8,15 @@ using namespace std;
 
 class Map {
 
-	//public:
+	public:
+		virtual Map();
+		virtual ~Map();
 
+	protected:
+		unsigned int type; // definira le type de l'objet constituant la map
 
-	//private:
-
+	private:
+		
 
 
 };

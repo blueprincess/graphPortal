@@ -3,6 +3,7 @@
 #define _GRAPHISME_H_
 
 #include "Perso.hpp"
+#include "Map.hpp"
 
 #include "../stein/math/Matrix4f.hpp"
 
@@ -21,7 +22,7 @@ class Graphisme {
 		chargement map (solution technique non élaboré actuellement)
 		gestion textures
 
-	à créer part petites fonctions combinées
+	à créer par petites fonctions combinées
 */
 
 	public:
