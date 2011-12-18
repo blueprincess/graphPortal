@@ -2,7 +2,12 @@
 #ifndef _GRAPHISME_H_
 #define _GRAPHISME_H_
 
+#include "Perso.hpp"
+
+#include "../stein/math/Matrix4f.hpp"
+
 using namespace std;
+using namespace stein;
 
 /* Gestion Graphique du jeu
 //
@@ -19,10 +24,14 @@ class Graphisme {
 	à créer part petites fonctions combinées
 */
 
-	//public:
+	public:
+		Graphisme();
+		void createMatrixCamera(Perso a);
 
 
-	//private:
+	private:
+
+		Matrix4f * cameraPerso; // Matrix of character's view
 
 
 
