@@ -5,13 +5,13 @@
 
 using namespace std;
 
-Perso::Perso() : PointVie(100), Quantite_peinture(50) {
+Perso::Perso() : PointVie(100) {
 
 	position = new double[3];
 
 };
 
-void Perso::setPosition(const double x, const double y, const double z){
+void Perso::setPosition(const double &x, const double &y, const double &z){
 
 	position[0] = x;
 	position[1] = y;

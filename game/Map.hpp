@@ -9,7 +9,7 @@ using namespace std;
 class Map {
 
 	public:
-		virtual Map();
+		Map();
 		virtual ~Map();
 
 	protected:

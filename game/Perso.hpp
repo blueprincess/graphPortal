@@ -17,7 +17,7 @@ class Perso {
 
 		Perso();
 
-		void setPosition(const double x, const double y, const double z);
+		void setPosition(const double &x, const double &y, const double &z);
 		void setPosition(const double new_position[3]);
 
 		void setMove(const double &x, const double &y, const double &z);
@@ -28,7 +28,6 @@ class Perso {
 
 /* A faire:
 
-	fonction getPosition
 	fonction de gestion vie:
 		setLife(unsigned int valeur) ex: -3 retire 3 point de vie
 		bool isLive
@@ -37,7 +36,8 @@ class Perso {
 
 	private:
 		unsigned int PointVie;
-		unsigned int Quantite_peinture;
+		unsigned int nbreBombes; // Peinture rapprochee
+		unsigned int nbrePots; // Peinture projetee
 		double * position;
 
 };
