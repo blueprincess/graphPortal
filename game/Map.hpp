@@ -2,21 +2,25 @@
 #ifndef _MAP_H_
 #define _MAP_H_
 
+#include "Light.hpp"
+
 using namespace std;
 
 /* Classe de gestion de la map :  fabrication, chargement, type de mur .. */
+
 
 class Map {
 
 	public:
 		Map();
-		virtual ~Map();
+		~Map();
 
 	protected:
-		unsigned int type; // definira le type de l'objet constituant la map
+		
 
 	private:
-		
+		unsigned int nbLights;
+		Light * data;
 
 
 };

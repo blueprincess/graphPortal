@@ -1,23 +1,23 @@
 
-#include "Perso.hpp"
+#include "Light.hpp"
 
 #include <cstdlib>
 
-using namespace std;
-
-Perso::Perso() : PointVie(100) {
+Light::Light(const GLuint &shader,const unsigned int &lightType) : shaderId(shader), type(lightType) {
 
 	position = new double[3];
-
-};
-
-Perso::~Perso() {
-
-	delete position;
+	color = new GLfloat[3];
 
 }
 
-void Perso::setPosition(const double &x, const double &y, const double &z){
+Light::~Light() {
+
+	delete position;
+	delete color;
+
+}
+
+void Light::setPosition(const double &x, const double &y, const double &z){
 
 	position[0] = x;
 	position[1] = y;
@@ -25,7 +25,7 @@ void Perso::setPosition(const double &x, const double &y, const double &z){
 };
 
 
-void Perso::setPosition(const double new_position[3]){
+void Light::setPosition(const double new_position[3]){
 
 		position[0] = new_position[0];
 		position[1] = new_position[1];
@@ -34,7 +34,7 @@ void Perso::setPosition(const double new_position[3]){
 
 };
 
-void Perso::setMove(const double &x, const double &y, const double &z){
+void Light::setMove(const double &x, const double &y, const double &z){
 
 	position[0] += x;
 	position[1] += y;
@@ -42,7 +42,7 @@ void Perso::setMove(const double &x, const double &y, const double &z){
 };
 
 
-void Perso::setMove(const double new_position[3]){
+void Light::setMove(const double new_position[3]){
 
 		position[0] += new_position[0];
 		position[1] += new_position[1];
@@ -50,14 +50,20 @@ void Perso::setMove(const double new_position[3]){
 
 };
 
-void Perso::getPosition(double &x, double &y, double &z) const {
+void Light::setShaderId(const GLuint &shader){
+
+	shaderId = shader;
+
+};
+
+void Light::getPosition(double &x, double &y, double &z) const {
 
 	x = position[0];
 	y = position[1];
 	z = position[2];
 }
 
-double * Perso::getPosition() {
+double * Light::getPosition() {
 
 	double now_position[3];
 

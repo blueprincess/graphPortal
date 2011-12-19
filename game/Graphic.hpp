@@ -1,8 +1,8 @@
 
-#ifndef _GRAPHISME_H_
-#define _GRAPHISME_H_
+#ifndef _Graphic_H_
+#define _Graphic_H_
 
-#include "Perso.hpp"
+#include "Character.hpp"
 #include "Map.hpp"
 
 #include "../stein/math/Matrix4f.hpp"
@@ -15,7 +15,7 @@ using namespace stein;
 //	cette classe cointiendra (avec probablement de futures sous classes: textures ...) l'ensemble des fonction qui gèront les effets et rendus graphisques
 */
 
-class Graphisme {
+class Graphic {
 
 /* A faire
 		chargement obj 3ds
@@ -26,13 +26,13 @@ class Graphisme {
 */
 
 	public:
-		Graphisme();
-		void createMatrixCamera(Perso a);
+		Graphic();
+		void createMatrixCamera(Character a);
 
 
 	private:
 
-		Matrix4f * cameraPerso; // Matrix of character's view
+		Matrix4f * cameraCharacter; // Matrix of character's view
 
 
 

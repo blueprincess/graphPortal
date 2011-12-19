@@ -1,6 +1,6 @@
 
-#ifndef _PERSO_H_
-#define _PERSO_H_
+#ifndef _CHARACTER_H_
+#define _CHARACTER_H_
 
 //lib tmp pour dev:
 #include <iostream>
@@ -9,12 +9,12 @@ using namespace std;
 
 /* cette classe doit gerer l'ensemble des déplacement du personnage et de ces attributs */
 
-class Perso {
+class Character {
 
 	public:
 
-		Perso();
-		~Perso();
+		Character();
+		~Character();
 
 		void setPosition(const double &x, const double &y, const double &z);
 		void setPosition(const double new_position[3]);

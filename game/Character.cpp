@@ -1,23 +1,23 @@
 
-#include "Lumiere.hpp"
+#include "Character.hpp"
 
 #include <cstdlib>
 
-Lumiere::Lumiere(GLuint shader, unsigned int lumiereType) : shaderId(shader), type(lumiereType) {
+using namespace std;
+
+Character::Character() : PointVie(100) {
 
 	position = new double[3];
-	color = new GLfloat[3];
 
-}
+};
 
-Lumiere::~Lumiere() {
+Character::~Character() {
 
 	delete position;
-	delete color;
 
 }
 
-void Lumiere::setPosition(const double &x, const double &y, const double &z){
+void Character::setPosition(const double &x, const double &y, const double &z){
 
 	position[0] = x;
 	position[1] = y;
@@ -25,7 +25,7 @@ void Lumiere::setPosition(const double &x, const double &y, const double &z){
 };
 
 
-void Lumiere::setPosition(const double new_position[3]){
+void Character::setPosition(const double new_position[3]){
 
 		position[0] = new_position[0];
 		position[1] = new_position[1];
@@ -34,7 +34,7 @@ void Lumiere::setPosition(const double new_position[3]){
 
 };
 
-void Lumiere::setMove(const double &x, const double &y, const double &z){
+void Character::setMove(const double &x, const double &y, const double &z){
 
 	position[0] += x;
 	position[1] += y;
@@ -42,7 +42,7 @@ void Lumiere::setMove(const double &x, const double &y, const double &z){
 };
 
 
-void Lumiere::setMove(const double new_position[3]){
+void Character::setMove(const double new_position[3]){
 
 		position[0] += new_position[0];
 		position[1] += new_position[1];
@@ -50,14 +50,14 @@ void Lumiere::setMove(const double new_position[3]){
 
 };
 
-void Lumiere::getPosition(double &x, double &y, double &z) const {
+void Character::getPosition(double &x, double &y, double &z) const {
 
 	x = position[0];
 	y = position[1];
 	z = position[2];
 }
 
-double * Lumiere::getPosition() {
+double * Character::getPosition() {
 
 	double now_position[3];
 
