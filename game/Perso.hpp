@@ -2,8 +2,6 @@
 #ifndef _PERSO_H_
 #define _PERSO_H_
 
-#include <vector>
-
 //lib tmp pour dev:
 #include <iostream>
 
@@ -16,6 +14,7 @@ class Perso {
 	public:
 
 		Perso();
+		~Perso();
 
 		void setPosition(const double &x, const double &y, const double &z);
 		void setPosition(const double new_position[3]);
