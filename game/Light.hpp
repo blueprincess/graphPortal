@@ -18,6 +18,13 @@ class Light {
 		Light(const GLuint &shader,const unsigned int &lightType);
 		~Light();
 
+		void initPhong();
+
+		void setPhongAmbient(const GLfloat vec4[4]);
+		void setPhongDiffuse(const GLfloat vec4[4]);
+		void setPhongSpecular(const GLfloat vec4[4]);
+		void setPhongData(const GLfloat vec4[4]);
+
 		void setPosition(const double &x, const double &y, const double &z);
 		void setPosition(const double new_position[3]);
 
@@ -35,6 +42,10 @@ class Light {
 
 		double * position;
 		GLfloat * color;
+
+		GLfloat * ambient;
+		GLfloat * diffuse;
+		GLfloat * specular;
 		GLfloat * data;
 
 };

@@ -9,5 +9,5 @@ Graphic::Graphic() {
 
 void Graphic::createMatrixCamera(Character a){
 
-	
-};
+
+}
