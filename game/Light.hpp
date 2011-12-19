@@ -2,11 +2,9 @@
 #ifndef _LIGHT_H_
 #define _LIGHT_H_
 
-//#include "./Light/Phong.hpp"
-
 #include "../stein/GLHeaders.hpp"
 
-//	Definition des différents type de lumiere
+#define NULL_ShaderId 10000
 
 // tmp dev
 #include <iostream>
@@ -15,6 +13,8 @@
 class Light {
 
 	public:
+
+		Light();
 		Light(const GLuint &shader);
 		~Light();
 
@@ -29,8 +29,11 @@ class Light {
 		void getPosition(double &x, double &y, double &z) const;
 		double * getPosition();
 
-	private:
+	protected:
+
 		GLuint shaderId;
+
+	private:
 
 		double * position;
 		GLfloat * color;
@@ -40,6 +43,7 @@ class Light {
 class Phong : public Light {
 
 	public:
+
 		Phong(const GLuint &shader);
 		~Phong();
 

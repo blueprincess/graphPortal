@@ -5,6 +5,12 @@
 
 using namespace std;
 
+/***********************************/
+/*                                 */
+/*            Light                */
+/*                                 */
+/***********************************/
+
 Light::Light(const GLuint &shader) : shaderId(shader) {
 
 	position = new double[3];
@@ -30,9 +36,9 @@ void Light::setPosition(const double &x, const double &y, const double &z){
 
 void Light::setPosition(const double new_position[3]){
 
-		position[0] = new_position[0];
-		position[1] = new_position[1];
-		position[2] = new_position[2];
+	position[0] = new_position[0];
+	position[1] = new_position[1];
+	position[2] = new_position[2];
 
 
 }
@@ -47,9 +53,9 @@ void Light::setMove(const double &x, const double &y, const double &z){
 
 void Light::setMove(const double new_position[3]){
 
-		position[0] += new_position[0];
-		position[1] += new_position[1];
-		position[2] += new_position[2];
+	position[0] += new_position[0];
+	position[1] += new_position[1];
+	position[2] += new_position[2];
 
 }
 
@@ -77,33 +83,39 @@ double * Light::getPosition() {
 	return position;
 }
 
-void Phong::Phong(const GLuint &shader) : Light(shader), ka(0.01), kd(1.0), ks(2.0), shininess(5.0) {
+/***********************************/
+/*                                 */
+/*            Phong                */
+/*                                 */
+/***********************************/
 
-		ambient = new GLfloat[4];
+Phong::Phong(const GLuint &shader) : Light(shader), ka(0.01), kd(1.0), ks(2.0), shininess(5.0) {
 
-		ambient[0]=1.0;
-		ambient[1]=1.0;
-		ambient[2]=1.0;
-		ambient[3]=1.0;
+	ambient = new GLfloat[4];
 
-		diffuse = new GLfloat[4];
+	ambient[0]=1.0;
+	ambient[1]=1.0;
+	ambient[2]=1.0;
+	ambient[3]=1.0;
 
-		diffuse[0]=1.0;
-		diffuse[1]=1.0;
-		diffuse[2]=1.0;
-		diffuse[3]=1.0;
+	diffuse = new GLfloat[4];
 
-		specular = new GLfloat[4];
+	diffuse[0]=1.0;
+	diffuse[1]=1.0;
+	diffuse[2]=1.0;
+	diffuse[3]=1.0;
 
-		specular[0]=1.0;
-		specular[1]=1.0;
-		specular[2]=1.0;
-		specular[3]=1.0;
+	specular = new GLfloat[4];
+
+	specular[0]=1.0;
+	specular[1]=1.0;
+	specular[2]=1.0;
+	specular[3]=1.0;
 
 
 }
 
-void Phong::~Phong() {
+Phong::~Phong() {
 
 	delete ambient;
 	delete diffuse;
