@@ -51,6 +51,14 @@ Application::Application(size_t width, size_t height) :
 
 // Cleans before the application can be closed
 Application::~Application() {
+
+
+    /* La musique est terminée, on la libère */
+    Mix_FreeMusic(Music);
+
+    /* On libère le matériel */
+    Mix_CloseAudio();	
+	
     SDL_RemoveTimer(animateTimer);
     SDL_Quit();
 }
@@ -90,6 +98,16 @@ void Application::initSDLOpenGL() {
     height = windowedHeight;
     // Specifies the size and other options about the window and OpenGL context
     m_pDrawContext = SDL_SetVideoMode(width, height, 32, SDL_OPENGL | SDL_FULLSCREEN);
+
+	// SON
+
+	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
+	
+	Music = Mix_LoadMUS("../sound/son.mp3");
+
+	// Play Music
+		
+	Mix_PlayMusic(Music, -1);
 }
 
 // Customize a few OPenGL states to fit the application's needs
@@ -264,6 +282,7 @@ void Application::loop() {
         // Then it removes it from the stack.
         while (SDL_PollEvent(&event))
             handleEvent(event); // Checks each event for types and loach corresponding actions
+
 
         // Reports any possible glError
         printGlErrors();

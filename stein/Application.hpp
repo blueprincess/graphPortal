@@ -11,6 +11,7 @@
 
 // Windowing system SDL
 #include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
 
 namespace stein {
 
@@ -39,6 +40,8 @@ protected:
     size_t frameCount() const;
 
 private:
+    Mix_Music* Music;
+
     void customizeStates();
     void initSDLOpenGL();
     void initTimers();
