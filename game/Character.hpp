@@ -25,16 +25,10 @@ class Character {
 		void getPosition(double &x, double &y, double &z) const;
 		double * getPosition();
 
-/* A faire:
-
-	fonction de gestion vie:
-		setLife(unsigned int valeur) ex: -3 retire 3 point de vie
-		bool isLive
-
-*/
+		bool setLife(int variation);
 
 	private:
-		unsigned int PointVie;
+		unsigned int pointVie;
 		unsigned int nbreBombes; // Peinture rapprochee
 		unsigned int nbrePots; // Peinture projetee
 		double * position;

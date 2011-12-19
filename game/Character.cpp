@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Character::Character() : PointVie(100) {
+Character::Character() : pointVie(100) {
 
 	position = new double[3];
 
@@ -57,7 +57,7 @@ void Character::getPosition(double &x, double &y, double &z) const {
 	z = position[2];
 }
 
-double * Character::getPosition() {
+double * Character::Character::getPosition() {
 
 	double now_position[3];
 
@@ -67,4 +67,21 @@ double * Character::getPosition() {
 
 	return position;
 }
+
+bool Character::setLife(int variation){
+
+	int newLife = pointVie - variation;
+
+	if(newLife <= 0){
+
+		pointVie = 0;
+		return 0;
+	}
+	else {
+		pointVie=newLife;
+		return 1;
+	}
+
+}
+
 
