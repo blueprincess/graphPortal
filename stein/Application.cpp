@@ -89,7 +89,7 @@ void Application::initSDLOpenGL() {
     width = windowedWidth;
     height = windowedHeight;
     // Specifies the size and other options about the window and OpenGL context
-    m_pDrawContext = SDL_SetVideoMode(width, height, 0, videoModeFlags);
+    m_pDrawContext = SDL_SetVideoMode(width, height, 32, SDL_OPENGL | SDL_FULLSCREEN);
 }
 
 // Customize a few OPenGL states to fit the application's needs
