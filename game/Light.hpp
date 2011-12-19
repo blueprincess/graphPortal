@@ -2,11 +2,11 @@
 #ifndef _LIGHT_H_
 #define _LIGHT_H_
 
+//#include "./Light/Phong.hpp"
+
 #include "../stein/GLHeaders.hpp"
 
 //	Definition des différents type de lumiere
-
-#define lightPhong 1
 
 // tmp dev
 #include <iostream>
@@ -15,15 +15,8 @@
 class Light {
 
 	public:
-		Light(const GLuint &shader,const unsigned int &lightType);
+		Light(const GLuint &shader);
 		~Light();
-
-		void initPhong();
-
-		void setPhongAmbient(const GLfloat vec4[4]);
-		void setPhongDiffuse(const GLfloat vec4[4]);
-		void setPhongSpecular(const GLfloat vec4[4]);
-		void setPhongData(const GLfloat vec4[4]);
 
 		void setPosition(const double &x, const double &y, const double &z);
 		void setPosition(const double new_position[3]);
@@ -38,15 +31,32 @@ class Light {
 
 	private:
 		GLuint shaderId;
-		const unsigned int type;
 
 		double * position;
 		GLfloat * color;
 
+};
+
+class Phong : public Light {
+
+	public:
+		Phong(const GLuint &shader);
+		~Phong();
+
+		void setPhongAmbient(const GLfloat vec4[4]);
+		void setPhongDiffuse(const GLfloat vec4[4]);
+		void setPhongSpecular(const GLfloat vec4[4]);
+		void setPhongData(const GLfloat &new_ka, const GLfloat &new_kd, const GLfloat &new_ks, const GLfloat &new_shininess);
+
+	private:
+
 		GLfloat * ambient;
 		GLfloat * diffuse;
 		GLfloat * specular;
-		GLfloat * data;
+		GLfloat ka;
+		GLfloat kd;
+		GLfloat ks;
+		GLfloat shininess;
 
 };
 
