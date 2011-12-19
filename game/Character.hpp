@@ -28,6 +28,7 @@ class Character {
 		bool setLife(int variation);
 
 	private:
+
 		unsigned int pointVie;
 		unsigned int nbreBombes; // Peinture rapprochee
 		unsigned int nbrePots; // Peinture projetee

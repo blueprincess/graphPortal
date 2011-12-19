@@ -77,6 +77,7 @@ bool Character::setLife(int variation){
 		pointVie = 0;
 		return 0;
 	}
+
 	else {
 		pointVie=newLife;
 		return 1;

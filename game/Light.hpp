@@ -4,8 +4,6 @@
 
 #include "../stein/GLHeaders.hpp"
 
-#define NULL_ShaderId 10000
-
 // tmp dev
 #include <iostream>
 
@@ -14,7 +12,6 @@ class Light {
 
 	public:
 
-		Light();
 		Light(const GLuint &shader);
 		~Light();
 
