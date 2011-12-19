@@ -9,7 +9,7 @@ Character::Character() : pointVie(100) {
 
 	position = new double[3];
 
-};
+}
 
 Character::~Character() {
 
@@ -22,7 +22,7 @@ void Character::setPosition(const double &x, const double &y, const double &z){
 	position[0] = x;
 	position[1] = y;
 	position[2] = z;
-};
+}
 
 
 void Character::setPosition(const double new_position[3]){
@@ -32,14 +32,14 @@ void Character::setPosition(const double new_position[3]){
 		position[2] = new_position[2];
 
 
-};
+}
 
 void Character::setMove(const double &x, const double &y, const double &z){
 
 	position[0] += x;
 	position[1] += y;
 	position[2] += z;
-};
+}
 
 
 void Character::setMove(const double new_position[3]){
@@ -48,7 +48,7 @@ void Character::setMove(const double new_position[3]){
 		position[1] += new_position[1];
 		position[2] += new_position[2];
 
-};
+}
 
 void Character::getPosition(double &x, double &y, double &z) const {
 
