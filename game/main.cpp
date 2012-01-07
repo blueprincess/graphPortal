@@ -1,7 +1,6 @@
 
-#include "../boids/BoidsApplication.h"
-
-#include <stein/math/StreamUtils.h>
+#include "../stein/math/StreamUtils.h"
+#include "../stein/stein.hpp"
 
 #include <iostream>
 
@@ -17,8 +16,7 @@ int main(int argc, char **argv) {
 */	
 
     try {
-        BoidsApplication app;
-        app.loop();
+       	GLlaunch();
         return EXIT_SUCCESS;
     } catch (exception &e) {
         cerr << e.what() << endl;

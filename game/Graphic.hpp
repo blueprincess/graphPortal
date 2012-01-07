@@ -5,10 +5,9 @@
 #include "Character.hpp"
 #include "Map.hpp"
 
-#include "../stein/math/Matrix4f.hpp"
+//#include "../stein/math/Matrix4f.hpp"
 
 using namespace std;
-using namespace stein;
 
 /* Gestion Graphique du jeu
 //
@@ -32,7 +31,7 @@ class Graphic {
 
 	private:
 
-		Matrix4f * cameraCharacter; // Matrix of character's view
+		// Matrix4f * cameraCharacter; // Matrix of character's view
 
 
 

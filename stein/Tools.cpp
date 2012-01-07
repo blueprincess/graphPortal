@@ -2,115 +2,277 @@
 // Template for OpenGL 3.*
 // N. Dommanget dommange@univ-mlv.fr
 
+
 #include "Tools.hpp"
 
 #include <iostream>
 #include <string.h>
 #include <fstream>
 #include <sstream>
-#include <cmath>
+#include <math.h>
 
-using namespace std;
+/*--------------------------------------
+QUESTION C - FONCTION DE CHANGEMENT DE COULEUR
+--------------------------------------*/
+void changeColor(GLfloat *color){
+	if (color[2] == 1.0)
+	{
+		color[0] = 0.0;
+		color[1] = 0.0;
+		color[2] = 0.0;
+	}
+	else if (color[0] == 1.0)
+	{
+		color[0] = 0.0;
+		color[1] = 1.0;
+		color[2] = 0.0;
+	}
+	else if (color[1] == 1.0)
+	{
+		color[0] = 0.0;
+		color[1] = 0.0;
+		color[2] = 1.0;
+	}
+	else
+	{
+		color[0] = 1.0;
+		color[1] = 0.0;
+		color[2] = 0.0;
+	}
+}
 
-namespace stein {
+// To get the norm of a vector
+GLfloat getNorm (GLfloat * a) 
+{
+    return sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
+}
+
+
+// To normalize a vector
+void normalize (GLfloat * a)
+{
+	GLfloat norm=getNorm(a);
+	if (norm!=0.0)
+	{
+	    a[0]/=norm;
+	    a[1]/=norm;
+	    a[2]/=norm;
+	}
+}
+
+
+// To get the vector product
+void vectorProduct (GLfloat * a, GLfloat * b, GLfloat * result)
+{
+	result[0]=a[1]*b[2] - a[2]*b[1];
+	result[1]=a[2]*b[0] - a[0]*b[2];
+	result[2]=a[0]*b[1] - a[1]*b[0];
+}
+
+// Does the multiplication A=A*B : all the matrices are described column-major
+void multMatrixBtoMatrixA(GLfloat * A, GLfloat * B)
+{
+    int i=0; // row index
+    int j=0; // column index
+    GLfloat temp[16];
+    
+    for (int iValue=0 ; iValue<16 ; iValue++)
+    {
+        temp[iValue]=0;
+        //j=iValue%4; // if raw-major
+        //i=iValue/4; // if raw-major
+        i=iValue%4; // if column-major
+        j=iValue/4; // if column-major
+        for (int k=0 ; k<4 ; k++)
+        {
+            int indexik=k*4+i;
+            int indexkj=j*4+k;
+            temp[iValue]+=A[indexik]*B[indexkj];
+        }
+    }
+    
+    for (int iValue=0 ; iValue<16 ; iValue++)
+        A[iValue]=temp[iValue];
+}
+
+
+// Sets the provided matrix to identity
+void setToIdentity(GLfloat * matrix)
+{
+    GLfloat I[]={1.0, 0.0, 0.0, 0.0, 
+                 0.0, 1.0, 0.0, 0.0, 
+                 0.0, 0.0, 1.0, 0.0, 
+                 0.0, 0.0, 0.0, 1.0};
+    for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+        matrix[iMatrixCoord]=I[iMatrixCoord];
+}
+
 
 // Sets the provided matrix to a translate matrix on vector t
-Matrix4f translation(const Vector3f&t) {
-    return Matrix4f( //
-        1, 0, 0, 0, //
-        0, 1, 0, 0, //
-        0, 0, 1, 0, //
-        t.x, t.y, t.z, 1);
+void setToTranslate(GLfloat * matrix, GLfloat * t)
+{
+    GLfloat T[]={1.0,   0.0,   0.0,   0.0,
+                 0.0,   1.0,   0.0,   0.0,
+                 0.0,   0.0,   1.0,   0.0,
+                 t[0],  t[1],  t[2],  1.0}; 
+    for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+        matrix[iMatrixCoord]=T[iMatrixCoord];
 }
+
 
 // Sets the provided matrix to a scale matrix by coeficients in s
-Matrix4f scale(const Vector3f&s) {
-    return Matrix4f( //
-        s.x, 0, 0, 0, //
-        0, s.y, 0, 0, //
-        0, 0, s.z, 0, //
-        0, 0, 0, 1);
+void setToScale(GLfloat * matrix, GLfloat * s)
+{
+    GLfloat S[]={s[0], 0.0,  0.0,  0.0,
+                 0.0,  s[1], 0.0,  0.0,
+                 0.0,  0.0,  s[2], 0.0,
+                 0.0,  0.0,  0.0,  1.0};  
+    for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+        matrix[iMatrixCoord]=S[iMatrixCoord];
 }
 
-Matrix4f xRotation(const float angle) {
-    const float c = cos(angle);
-    const float s = sin(angle);
-    return Matrix4f( //
-        1, 0, 0, 0, //
-        0, c, s, 0, //
-        0, -s, c, 0, //
-        0, 0, 0, 1);
-}
-Matrix4f yRotation(const float angle) {
-    const float c = cos(angle);
-    const float s = sin(angle);
-    return Matrix4f( //
-        c, 0, -s, 0, //
-        0, 1, 0, 0, //
-        s, 0, c, 0, //
-        0, 0, 0, 1);
-}
-Matrix4f zRotation(const float angle) {
-    const float c = cos(angle);
-    const float s = sin(angle);
-    return Matrix4f( //
-        c, s, 0, 0, //
-        -s, c, 0, 0, //
-        0, 0, 1, 0, //
-        0, 0, 0, 1);
+
+// Sets the provided matrix to a rotate matrix of angle "angle", around axis "axis"
+void setToRotate(GLfloat * matrix, GLfloat angle, GLfloat * axis)
+{
+    GLfloat c=cos(angle);
+    GLfloat s=sin(angle);
+    GLfloat x=axis[0]; 
+    GLfloat y=axis[1]; 
+    GLfloat z=axis[2];
+
+    if ((x==1.0) && (y==0.0) && (z==0.0))
+    {
+        GLfloat R[]={1.0, 0.0, 0.0, 0.0, 
+                     0.0, c,   s,   0.0, 
+                     0.0, -s,  c,   0.0, 
+                     0.0, 0.0, 0.0, 1.0};
+        for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+            matrix[iMatrixCoord]=R[iMatrixCoord];
+    }
+    else
+    {
+        if ((x==0.0) && (y==1.0) && (z==0.0))
+        {                    
+            GLfloat R[]={c,   0.0, -s,  0.0, 
+                         0.0, 1.0, 0.0, 0.0, 
+                         s,   0.0, c,   0.0, 
+                         0.0, 0.0, 0.0, 1.0};
+            for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+                matrix[iMatrixCoord]=R[iMatrixCoord];
+        }
+        else
+        {
+
+            if ((x==0.0) && (y==0.0) && (z==1.0))
+            {                                          
+                GLfloat R[]={c,   s,   0.0, 0.0, 
+                             -s,  c,   0.0, 0.0, 
+                             0.0, 0.0, 1.0, 0.0, 
+                             0.0, 0.0, 0.0, 1.0};
+                for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+                    matrix[iMatrixCoord]=R[iMatrixCoord];
+            }
+            else
+            {
+                GLfloat R[]={ (1.0-c)*(x*x-1.0) + 1.0, (1.0-c)*x*y + (z*s),     (1.0-c)*x*z - (y*s),      0.0, 
+                              (1.0-c)*x*y - (z*s),     (1.0-c)*(y*y-1.0) + 1.0, (1.0-c)*y*z + (x*s),      0.0, 
+                              (1.0-c)*x*z + (y*s),     (1.0-c)*y*z - (x*s),     (1.0-c)*(z*z-1.0) + 1.0,  0.0, 
+                              0.0,                     0.0,                     0.0,                      1.0};
+                for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+                    matrix[iMatrixCoord]=R[iMatrixCoord];
+                std::cout<<"Rotation on non standard axis."<<std::endl;
+            }
+        }
+    }
 }
 
-Matrix4f rotation(const float angle, const Vector3f &axis) {
-    const float c = cos(angle);
-    const float s = sin(angle);
-    const float x = axis.x;
-    const float y = axis.y;
-    const float z = axis.z;
-    return Matrix4f( //
-        (1 - c) * (x * x - 1) + 1, (1 - c) * x * y + (z * s), (1 - c) * x * z - (y * s), 0, //
-        (1 - c) * x * y - (z * s), (1 - c) * (y * y - 1) + 1, (1 - c) * y * z + (x * s), 0, //
-        (1 - c) * x * z + (y * s), (1 - c) * y * z - (x * s), (1 - c) * (z * z - 1) + 1, 0, //
-        0, 0, 0, 1);
-}
 
 // Builds a perspective projection matrix and stores it in mat
 // l=left, r=right, b=bottom, t=top, n=near, f=far in the frustum
-void setPerspective(GLfloat * mat, GLfloat l, GLfloat r, GLfloat b, GLfloat t, GLfloat n, GLfloat f) {
-    GLfloat P[] = { (2 * n) / (r - l), 0, 0, 0, 0, (2 * n) / (t - b), 0, 0, (r + l) / (r - l), (t + b) / (t - b), -(f + n) / (f - n), -1, 0, 0, 0, 0 };
-    for (int iMatrixCoord = 0; iMatrixCoord < 16; iMatrixCoord++)
-        mat[iMatrixCoord] = P[iMatrixCoord];
+void setPerspective(GLfloat * mat, GLfloat l, GLfloat r, GLfloat b, GLfloat t, GLfloat n, GLfloat f)
+{
+    GLfloat P[]={(2*n)/(r-l), 0.0, 0.0, 0.0,
+                 0.0, (2*n)/(t-b), 0.0, 0.0,
+                 (r+l)/(r-l), (t+b)/(t-b), -(f+n)/(f-n), -1.0,
+                 0.0, 0.0, 0.0, 0.0};
+    for (int iMatrixCoord=0 ; iMatrixCoord<16 ; iMatrixCoord++)
+        mat[iMatrixCoord]=P[iMatrixCoord];
 }
 
+
+// To print a vector of 2 values (textures 2D coordinates for example)
+void printVec2(GLfloat * vect)
+{
+	std::cout<<"["<<vect[0]<<", "<<vect[1]<<"]"<<std::endl;
+}
+
+
+// To print a vector of 3 values (a normal for example)
+void printVec3(GLfloat * vect)
+{
+	std::cout<<"["<<vect[0]<<", "<<vect[1]<<", "<<vect[2]<<"]"<<std::endl;
+}
+
+
+// To print a vector of 4 values (a position for example)
+void printVec4(GLfloat * vect)
+{
+	std::cout<<"["<<vect[0]<<", "<<vect[1]<<", "<<vect[2]<<", "<<vect[3]<<"]"<<std::endl;
+}
+
+
+// To print a matrix (written in math form, not in column-major 16 values array)
+void printMat16(GLfloat * mat)
+{
+    std::cout<<std::endl;
+    for (GLuint iRow=0 ; iRow<4 ; iRow++)
+    {
+        std::cout<<"| ";
+        for (GLuint iColumn=0 ; iColumn<4 ; iColumn++)
+        {
+            std::cout<<mat[(iColumn*4)+iRow];
+            std::cout<<" ";
+        }
+        std::cout<<"|"<<std::endl;
+    }
+}
+
+
 // Prints the stack of glErrors, or nothing if no error occured
-void printGlErrors() {
+void printGlErrors()
+{
     GLenum error = glGetError();
     
     // The glGetError function returns one error at a time, and then unstacks it.
     // Here we call it until all the errors are shown.
-    while (error != GL_NO_ERROR) {
-        cout << "!! GL Error : ";
-        if (error == GL_INVALID_ENUM)
-            cout << "GL_INVALID_ENUM" << endl;
-        if (error == GL_INVALID_VALUE)
-            cout << "GL_INVALID_VALUE" << endl;
-        if (error == GL_INVALID_OPERATION)
-            cout << "GL_INVALID_OPERATION" << endl;
-        if (error == GL_OUT_OF_MEMORY)
-            cout << "GL_OUT_OF_MEMORY" << endl;
+    while (error!=GL_NO_ERROR)
+    {
+        std::cout<<"!! GL Error : ";
+        if (error==GL_INVALID_ENUM)
+            std::cout<<"GL_INVALID_ENUM"<<std::endl;
+        if (error==GL_INVALID_VALUE)
+            std::cout<<"GL_INVALID_VALUE"<<std::endl;
+        if (error==GL_INVALID_OPERATION)
+            std::cout<<"GL_INVALID_OPERATION"<<std::endl;
+        if (error==GL_OUT_OF_MEMORY)
+            std::cout<<"GL_OUT_OF_MEMORY"<<std::endl;
 
-        error = glGetError();
+        error=glGetError();
 
-        cout << endl;
+        std::cout<<std::endl;
         //exit(1);
     }
 }
 
-// Loads a simple texture
-GLuint loadTexture(const char* fileName) {
-    GLuint w;
-    GLuint h;
+
+// LoadsGLfloat a[]={A[0]-O[0], A[1]-O[1], A[2]-O[2]}; a simple texture
+GLuint loadTexture(const std::string &fileName)
+{
+    GLuint  w;
+    GLuint  h;
     // Loads the image from a ppm file to an unsigned char array
-    unsigned char *data = loadPPM(fileName, w, h);
+    unsigned char *data=loadPPM(fileName, &w, &h);
 
     // Allocates a texture id
     GLuint textureID;
@@ -131,16 +293,21 @@ GLuint loadTexture(const char* fileName) {
     return textureID;
 }
 
-// Writes content of a text file [fileName] in a returned string
-string* loadFile(const string &fileName) {
-    string* result = new string();
-    ifstream file(fileName.c_str());
-    if (!file) {
-        cerr << "Cannot open file " << fileName << endl;
-        throw exception();
+
+
+// Writes content of a text file [fileName] in a returned std::string
+std::string* loadFile(const std::string &fileName)
+{
+    std::string* result = new std::string();
+    std::ifstream file(fileName.c_str());
+    if (!file) 
+    {
+        std::cerr << "Cannot open file " << fileName << std::endl;
+        throw std::exception();
     }
-    string line;
-    while (getline(file, line)) {
+    std::string line;
+    while (getline(file, line)) 
+    {
         *result += line;
         *result += '\n';
     }
@@ -148,53 +315,53 @@ string* loadFile(const string &fileName) {
     return result;
 }
 
+
+
 // Prints info about potential problems which occured during compilation
-void printShaderLog(GLint shaderId) {
+void printShaderLog(GLint shaderId)
+{
     GLint logLength;
     glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0) {
-        char *log = new char[logLength];
+    if (logLength > 0)
+    {
+        char *log=new char[logLength];
         glGetShaderInfoLog(shaderId, logLength, &logLength, log);
-        cout << string(log);
+        std::cout << std::string(log);
         delete[] log;
     }
 }
 
-GLuint loadProgram(const string &file) {
-    vector<string> files;
-    files.push_back(file);
-    return loadProgram(files);
-}
+
 
 // Loads files [files] in string table, builds program object, compile shaders in shaders objects, links and return the id program object (with the executable code)
-GLuint loadProgram(const vector<string> &files) {
-    GLuint programId = glCreateProgram(); /// Creates a program object which id is returned
+GLuint loadProgram(const std::vector<std::string> &files)
+{
+    GLuint programId=glCreateProgram(); /// Creates a program object which id is returned
 
     glBindAttribLocation(programId, 0, "vertexPosition");
     glBindAttribLocation(programId, 1, "vertexNormal");
-    glBindAttribLocation(programId, 2, "vertexUv");
     glBindAttribLocation(programId, 3, "vertexColor");
 
-    GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER); /// Creates a vertex shader object which id is returned
-    GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER); /// Creates a fragment shader object which id is returned
+    GLuint vertexShaderId=glCreateShader(GL_VERTEX_SHADER); /// Creates a vertex shader object which id is returned
+    GLuint fragmentShaderId=glCreateShader(GL_FRAGMENT_SHADER); /// Creates a fragment shader object which id is returned
     glAttachShader(programId, vertexShaderId);
     glAttachShader(programId, fragmentShaderId);
 
     GLint n = files.size();
-    string **strs = new string*[n];
-    const char** lines = new const char*[n + 1];
-    cout << "      Loading program " << files[n - 1] << "..." << endl;
+    std::string **strs=new std::string*[n];
+    const char** lines=new const char*[n + 1];
+    std::cout << "      Loading program " << files[n - 1] << "..." << std::endl;
     
     bool geo = false;
-    for (int i = 0; i < n; ++i) /// For every file :
-        {
-        string* s = loadFile(files[i]); /// get string of file
-        strs[i] = s; /// Store it [string] in strs[i]
-        lines[i + 1] = s->c_str(); /// Store it [char] in lines[i+1]
-
+    for (int i=0 ; i<n ; ++i) /// For every file :
+    {
+        std::string* s=loadFile(files[i]); /// get std::string of file
+        strs[i]=s; /// Store it [std::string] in strs[i]
+        lines[i+1]=s->c_str(); /// Store it [char] in lines[i+1]
+        
         /// If _GEOMETRY_ is in file, geometrey shader : geo=true
-        if (strstr(lines[i + 1], "_GEOMETRY_") != NULL) /// strstr(a, b)-> finds firt occurence of b in a
-            geo = true;
+        if (strstr(lines[i+1], "_GEOMETRY_") != NULL) /// strstr(a, b)-> finds firt occurence of b in a
+            geo=true;
     }
 
     lines[0] = "#define _VERTEX_\n";
@@ -202,7 +369,8 @@ GLuint loadProgram(const vector<string> &files) {
     glCompileShader(vertexShaderId); /// Compile the loaded shader source code
     printShaderLog(vertexShaderId); /// Prints compilation potential problems
 
-    if (geo) {
+    if (geo) 
+    {
         unsigned int geometryShaderId = glCreateShader(GL_GEOMETRY_SHADER_EXT); /// Creates a geometry shader object which id is returned
         glAttachShader(programId, geometryShaderId);
         lines[0] = "#define _GEOMETRY_\n"; // Adds this text before the source text
@@ -219,7 +387,8 @@ GLuint loadProgram(const vector<string> &files) {
 
     glLinkProgram(programId); /// Links the program object to build the executable code
 
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) 
+    {
         delete strs[i];
     }
     delete[] strs;
@@ -228,24 +397,28 @@ GLuint loadProgram(const vector<string> &files) {
     return programId; /// Returns the id of the program object
 }
 
+
 // Passing the matrices to the shader
-void setMatricesInShader(GLuint shaderID, const Matrix4f &model, const Matrix4f &view, const Vector3f &eye, const Matrix4f &projection) {
-    GLenum toTranspose = GL_FALSE;
+void setMatricesInShader(GLuint shaderID, GLfloat * model, GLfloat * view, GLfloat * c, GLfloat * projection)
+{
+    GLenum toTranspose=GL_FALSE;
     glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, toTranspose, model);
-    glUniformMatrix4fv(glGetUniformLocation(shaderID, "view"), 1, toTranspose, (const float*) view);
-    glUniform4fv(glGetUniformLocation(shaderID, "eye"), 1, (const float*) eye);
-    glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, toTranspose, (const float*) projection);
+    glUniformMatrix4fv(glGetUniformLocation(shaderID, "view"), 1, toTranspose, view);
+    glUniform4fv(glGetUniformLocation(shaderID, "eye"), 1, c);
+    glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, toTranspose, projection);
 }
 
 // Passing the light to the shader
-void setLightInShader(GLuint shaderID, GLfloat * position, GLfloat power) {
+void setLightInShader(GLuint shaderID, GLfloat * position, GLfloat power)
+{
     // Passing the light to the shader
     glUniform4fv(glGetUniformLocation(shaderID, "light.position"), 1, position);
     glUniform1f(glGetUniformLocation(shaderID, "light.power"), power);
 }
 
 // Passing the material to the shader
-void setMaterialInShader(GLuint shaderID, GLfloat * ambient, GLfloat * diffuse, GLfloat * specular, GLfloat ka, GLfloat kd, GLfloat ks, GLfloat shininess) {
+void setMaterialInShader(GLuint shaderID, GLfloat * ambient, GLfloat * diffuse, GLfloat * specular, GLfloat ka, GLfloat kd, GLfloat ks, GLfloat shininess)
+{
     glUniform4fv(glGetUniformLocation(shaderID, "material.ambient"), 1, ambient);
     glUniform4fv(glGetUniformLocation(shaderID, "material.diffuse"), 1, diffuse);
     glUniform4fv(glGetUniformLocation(shaderID, "material.specular"), 1, specular);
@@ -256,81 +429,92 @@ void setMaterialInShader(GLuint shaderID, GLfloat * ambient, GLfloat * diffuse, 
 }
 
 // Change color in the material in the shader (diffuse component)
-void changeMaterialColorInShader(GLuint shaderID, GLfloat * color) {
+void changeMaterialColorInShader(GLuint shaderID, GLfloat * color)
+{
     glUniform4fv(glGetUniformLocation(shaderID, "material.diffuse"), 1, color);
 }
 
 // Set filledData in the shader (flag saying with data is provided as attribute)
-void setFilledDataInShader(GLuint shaderID, GLboolean positions, GLboolean normals, GLboolean uvs, GLboolean colors) {
+void setFilledDataInShader(GLuint shaderID, GLboolean positions, GLboolean normals, GLboolean uvs, GLboolean colors)
+{
     glUniform4i(glGetUniformLocation(shaderID, "filledData"), positions, normals, uvs, colors);
 }
 
 // Sets the units of the textures to use for diffuse and specular as a uniform samplers in shader
-void setTextureUnitsInShader(GLuint shaderID) {
+void setTextureUnitsInShader(GLuint shaderID)
+{
     glUniform1i(glGetUniformLocation(shaderID, "textureUnitDiffuse"), 0);
     glUniform1i(glGetUniformLocation(shaderID, "textureUnitSpecular"), 1);
 }
+
+
 
 //______________________________________________________________________________
 // PPM file reading fuction
 
 // Loads an image encoded in ppm format (P6)
-unsigned char * loadPPM(const char* filename, GLuint &width, GLuint &height) {
+unsigned char * loadPPM(const std::string & filename, GLuint * width, GLuint * height)
+{	
     unsigned char * data;
     // Reads header
-    ifstream file(filename);
-    string line;
+	std::ifstream file(filename.c_str());
+	std::string line;
+	
+	// Formats
+	std::getline(file,line);
+	
+	// Skips comments
+	std::getline(file,line);
+	while(line[0]=='#')
+		std::getline(file,line);
 
-    // Formats
-    getline(file, line);
-
-    // Skips comments
-    getline(file, line);
-    while (line[0] == '#')
-        getline(file, line);
-
-    // Reads dimensions
-    istringstream ist(line);
-    ist >> width >> height;
+	// Reads dimensions
+	std::istringstream ist(line);
+    GLuint w, h;
+	ist >> w >> h;
+    *width=w;
+    *height=h;
 
     // Reads the data
-    getline(file, line);
+	std::getline(file,line);
 
     /* May be necessary on windows	   
-     // 	unsigned int dataStart = file.tellg();
-     // 	file.close();
-     // 	file.open(filename.c_str(),ios::in | ios::binary);
-     // 	file.seekg(dataStart);
-     */
+    // 	unsigned int dataStart = file.tellg();	
+    // 	file.close();
+    // 	file.open(filename.c_str(),std::ios::in | std::ios::binary); 
+    // 	file.seekg(dataStart);
+	*/
 
-    data = new unsigned char[width * height * 3];
-    file.read((char*) data, width * height * sizeof(unsigned char) * 3);
+	data = new unsigned char[w*h*3];
+	file.read((char*) data, w*h*sizeof(unsigned char)*3);
 
-    // Closes the file
-    file.close();
+	// Closes the file
+	file.close();
 
     return data;
 }
 
+
 // needs -lrt (real-time lib)
 // 1970-01-01 epoch UTC time, 1 microsecond resolution (divide by 1M to get time_t)
-uint64_t getTime() {
+uint64_t getTime()
+{
     timespec ts;
     
     // apple version was not tested and windows version is to be done
-#ifdef __APPLE__
-    clock_serv_t cclock;
-    mach_timespec_t mts;
-    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-    clock_get_time(cclock, &mts);
-    mach_port_deallocate(mach_task_self(), cclock);
-    ts.tv_sec = mts.tv_sec;
-    ts.tv_nsec = mts.tv_nsec;
-#else
-    clock_gettime(CLOCK_REALTIME, &ts);
-#endif
+    #ifdef __APPLE__
+        clock_serv_t cclock;
+        mach_timespec_t mts;
+        host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+        clock_get_time(cclock, &mts);
+        mach_port_deallocate(mach_task_self(), cclock);
+        ts.tv_sec = mts.tv_sec;
+        ts.tv_nsec = mts.tv_nsec;
+    #else
+        clock_gettime(CLOCK_REALTIME, &ts);
+    #endif
 
-    return ((uint64_t) ts.tv_sec * 1000000LL) + ((uint64_t) ts.tv_nsec / 1000LL);
+    return ((uint64_t)ts.tv_sec * 1000000LL) + ((uint64_t)ts.tv_nsec / 1000LL);
 }
 
-} // namespace stein
+

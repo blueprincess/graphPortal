@@ -2,48 +2,51 @@
 // Template for OpenGL 3.*
 // N. Dommanget dommange@univ-mlv.fr
 
+
 #ifndef __TOOLS_HPP__
 #define __TOOLS_HPP__
 
 // To include GL
 #include "GLHeaders.hpp"
 
-#include "math/Matrix4f.hpp"
-#include "math/Vector3f.hpp"
-
 // C++
 #include <string>
 #include <vector>
 
-namespace stein {
+GLfloat getNorm (GLfloat * a);
+void normalize (GLfloat * a);
+void vectorProduct (GLfloat * a, GLfloat * b, GLfloat * result);
 
-Matrix4f translation(const Vector3f&t);
-Matrix4f scale(const Vector3f&s);
-Matrix4f xRotation(const float angle);
-Matrix4f yRotation(const float angle);
-Matrix4f zRotation(const float angle);
-Matrix4f rotation(const float angle, const Vector3f &axis);
+void setToIdentity(GLfloat * matrix);
+void setToTranslate(GLfloat * matrix, GLfloat * t);
+void setToScale(GLfloat * matrix, GLfloat * s);
+void setToRotate(GLfloat * matrix, GLfloat angle, GLfloat * axis);
+void setPerspective(GLfloat * mat, GLfloat l, GLfloat r, GLfloat b, GLfloat t, GLfloat n, GLfloat f);
 
+void multMatrixBtoMatrixA(GLfloat * A, GLfloat * B);
+
+void printVec2(GLfloat * vect);
+void printVec3(GLfloat * vect);
+void printVec4(GLfloat * vect);
+void printMat16(GLfloat * mat);
 void printGlErrors();
 
-GLuint loadTexture(const char* fileName);
-GLuint loadProgram(const std::vector<std::string> & files);
-GLuint loadProgram(const std::string& file);
-void printShaderLog(GLint shaderId);
+GLuint loadTexture(const std::string &fileName);
 
 std::string * loadFile(const std::string & fileName);
-unsigned char * loadPPM(const char* filename, GLuint &width, GLuint &height);
-
-void setMatricesInShader(GLuint shaderId, const Matrix4f &model, const Matrix4f &view, const Vector3f &eye, const Matrix4f &projection);
+void printShaderLog(GLint shaderId);
+GLuint loadProgram(const std::vector<std::string> & files);
+void setMatricesInShader(GLuint shaderId, GLfloat * model, GLfloat * view, GLfloat * c, GLfloat * projection);
 void setLightInShader(GLuint shaderID, GLfloat * position, GLfloat power);
 void setMaterialInShader(GLuint shaderID, GLfloat * ambient, GLfloat * diffuse, GLfloat * specular, GLfloat ka, GLfloat kd, GLfloat ks, GLfloat shininess);
+void changeMaterialColorInShader(GLuint shaderID, GLfloat * color);
 void setFilledDataInShader(GLuint shaderID, GLboolean positions, GLboolean normals, GLboolean uvs, GLboolean colors);
 void setTextureUnitsInShader(GLuint shaderID);
 
-void changeMaterialColorInShader(GLuint shaderID, GLfloat * color);
+unsigned char * loadPPM(const std::string & filename, GLuint * width, GLuint * height);
 
 uint64_t getTime();
 
-} // namespace stein
-
+//Question C
+void changeColor(GLfloat * color);
 #endif //  __TOOLS_HPP__

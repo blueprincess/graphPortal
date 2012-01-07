@@ -2,75 +2,101 @@
 // Template for OpenGL 3.*
 // N. Dommanget dommange@univ-mlv.fr
 
+
 #ifndef __APPLICATION_HPP__
 #define __APPLICATION_HPP__
 
-#include "Scene.hpp"
-
 #include "GLHeaders.hpp"
+#include "Boid.hpp"
 
 // Windowing system SDL
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
 
-namespace stein {
+// Forward declaration
+struct Scene;
 
-// All the initialization of states and events for SDL and OpenGL
-class Application {
-public:
-    Application(size_t width, size_t height);
-    virtual ~Application();
 
-    void loop();
+// All the initialisation of states and events for SDL and OpenGL
+class Application
+{
+    public:
+	Boids * oiseau;
 
-protected:
-    Scene m_Scene;
+        SDL_TimerID animate2Timer;
+        int animate2EventID;                     // ID of the animation timer
+	int moveEventID;
+        
+	    SDL_Surface* drawContext;
 
-    void resize(GLuint w, GLuint h);
-    void setBackgroundColor(const Color &color);
-    void printFPS();
+	    unsigned int windowedWidth;             // Window dimentions when not fullscreen - horizontal axis
+	    unsigned int windowedHeight;            // Window dimentions when not fullscreen - vertical axis
+	    unsigned int fullScreenWidth;           // Screen dimentions - horizontal axis
+	    unsigned int fullScreenHeight;          // Screen dimentions - vertical axis	
+	    unsigned int width;                     // Window actual dimentions - horizontal axis
+	    unsigned int height;                    // Window actual dimentions - vertical axis
+	    
+        Uint32 videoModeFlags;
+        
+	    GLfloat xMousePosition;                 // Mouse position - horizontal axis (-1 to 1)
+	    GLfloat yMousePosition;                 // mouse position - vertical axis (-1 to 1)
+	    GLfloat xMouseLeftDownPosition;         // Mouse position - updated only when left button down
+	    GLfloat yMouseLeftDownPosition;         // mouse position - updated only when left button down
+	    int scroll;                             // scroll value (up : ++, down : --)
+	    
+	    GLfloat moveFlags[3];
+	    bool mouse;                             // True if mouse is seeable
+	    bool moveForward;
+	    bool moveBackward;
+ 	    bool moveLeft;
+            bool moveRight;
+	
+	    GLuint cntFrame;                        // Frame counter
+	    uint64_t lastStartTime;                 // Time updated every 10 frames
+	    uint64_t frameDuration;                 // Frame time duration
+	    
+	    GLuint cntAnimation;                         // Move counter
+	    bool done;                              // True when the window is closed to end the application
+        Scene * scene;                          // Scene to draw
+        
+        GLfloat backgroundColor[4];             // Color of the background;
 
-    virtual void renderFrame();
-    virtual void animate();
+        Application();
+        ~Application();
+        
+        void init();
+        void initSDLOpenGL();
+        void customizeStates();
+             
+        void setScene(Scene * scene);
+        
+	//Question B
+	void fonction_wireframe();
 
-    virtual void handleUserEvent(const SDL_Event& event);
-    virtual void handleKeyEvent(const SDL_keysym& keysym, bool down);
-    virtual void handleEvent(const SDL_Event& event);
+        void initTimers();
+	
+        void resize(GLuint w, GLuint h);
+        void setBackgroundColor(GLfloat * color);
+	void fonction_change_background(); //Question C
+        void printFPS();
 
-    size_t frameCount() const;
+	void moveFPS();
+        
+        void handleUserEvent(SDL_Event& event);
+        void handleKeyEvent(SDL_keysym& keysym, bool down);
+	void handleMouseMotionEvent(Uint16 x, Uint16 y);
+        void handleEvent(SDL_Event& event);	
 
-private:
-    Mix_Music* Music;
+        void renderFrame();
+        
+        void loop();
 
-    void customizeStates();
-    void initSDLOpenGL();
-    void initTimers();
+        void animate2();
 
-    SDL_TimerID animateTimer; // Timer for the animation
-
-    SDL_Surface* m_pDrawContext;
-
-    size_t windowedWidth; // Window dimensions when not fullscreen - horizontal axis
-    size_t windowedHeight; // Window dimensions when not fullscreen - vertical axis
-    size_t fullScreenWidth; // Screen dimensions - horizontal axis
-    size_t fullScreenHeight; // Screen dimensions - vertical axis
-    size_t width; // Window actual dimensions - horizontal axis
-    size_t height; // Window actual dimensions - vertical axis
-
-    const uint32_t videoModeFlags;
-
-    GLfloat m_MouseXPos; // Mouse position - horizontal axis (-1 to 1)
-    GLfloat m_MouseYPos; // mouse position - vertical axis (-1 to 1)
-    GLfloat m_PressedMouseXPos; // Mouse position - updated only when left button down
-    GLfloat m_PressedMouseYPos; // mouse position - updated only when left button down
-    int m_MouseScroll; // scroll value (up : ++, down : --)
-    bool m_bRunning; // True when the window is closed to end the application
-    bool m_bShowMouse; // True if mouse is seeable
-    GLuint m_FrameCount; // Frame counter
-    uint64_t m_LastStartTime; // Time updated every 10 frames
-    uint64_t m_FrameDuration; // Frame time duration
+	private:
+	    Mix_Music* Music;
 };
 
-} // namespace stein
+Uint32 genericTimer(Uint32 interval, void* param);
 
 #endif //__APPLICATION_HPP__ 
