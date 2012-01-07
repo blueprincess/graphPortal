@@ -2,37 +2,47 @@
 // Template for OpenGL 3.*
 // N. Dommanget dommange@univ-mlv.fr
 
+
 #ifndef __CAMERA_HPP__
 #define __CAMERA_HPP__
 
-#include "math/Vector3f.hpp"
-#include "math/Matrix4f.hpp"
-
-namespace stein {
+#include "GLHeaders.hpp"
 
 // A camera to watch the scene
-struct Camera {
-    Camera();
+class Camera
+{
+    public:
 
-    void setPosition(const Vector3f&);
-    void setPerspectiveProjection(float left, float right, float bottom, float top, float near, float far);
-    void setOrthoProjection(float left, float right, float bottom, float top, float near, float far);
+        // View Data
+        GLfloat c[3];               // Camera position 
+        GLfloat x[3];               // Camera axis x : right side
+        GLfloat y[3];               // Camera axis y : up
+        GLfloat z[3];               // Camera axis z : backward
+        GLfloat view[16];           // View matrix
 
-    const Vector3f& getPosition() const;
-    const Matrix4f& getView() const;
-    const Matrix4f& getProjection() const;
-private:
-    void updateView();
+        // Projection data
+        bool perspectiveProjection; // persepective projection:true / orthographic projection:false
+        GLfloat left;               // x coord from center to left plane of frustum
+        GLfloat right;              // x coord from center to right plane of frustum
+        GLfloat bottom;             // y coord from center to bottom plane of frustum
+        GLfloat top;                // y coord from center to top plane of frustum
+        GLfloat near;               // z coord from c to near plane of frustum
+        GLfloat far;                // z coord from c to far plane of frustum
+        GLfloat projection[16];     // Projection matrix
 
-    const Vector3f xAxis; // Camera axis x : right side
-    const Vector3f yAxis; // Camera axis y : up
-    const Vector3f zAxis; // Camera axis z : backward
 
-    Vector3f position; // Camera position
-    Matrix4f view; // View matrix
-    Matrix4f projection; // Projection matrix
+        Camera();
+        ~Camera();
+        
+        void init();
+
+        void setProjectionData(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near, GLfloat far);
+        void switchCameraProjection();
+
+        void updateView();
+        void updateProjection();
+	void lookAt(GLfloat *c, GLfloat *aim , GLfloat *up);
+	void setPerspectiveFromAngle(GLfloat fovy, GLfloat aspectRatio);
 };
-
-} // namespace stein
 
 #endif // __CAMERA_HPP__

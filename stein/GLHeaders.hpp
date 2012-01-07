@@ -43,7 +43,6 @@
 //#include <glew.h> // because we want the program to choose to provided Glew, 
 					   // not the one possibly installed on the system
 #include "glew/glew.h"
-#include <GL/gl.h>
 #endif
 
 //////////////////////// TEMPORARY TEMPORARY TEMPORARY - On SnowLeopard this is suppored, but GLEW doens't hook up properly

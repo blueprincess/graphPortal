@@ -3,7 +3,7 @@
 
 Graphic::Graphic() {
 
-	Matrix4f * cameraCharacter = new Matrix4f;
+	//Matrix4f * cameraCharacter = new Matrix4f;
 
 }
 

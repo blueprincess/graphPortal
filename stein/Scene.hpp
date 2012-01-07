@@ -2,68 +2,70 @@
 // Template for OpenGL 3.*
 // N. Dommanget dommange@univ-mlv.fr
 
+
 #ifndef __SCENE_HPP__
 #define __SCENE_HPP__
 
 #include "GLHeaders.hpp"
-#include "Camera.hpp"
-#include "Color.hpp"
-
-#include <vector>
-
-namespace stein {
 
 // Forward declaration
+struct Camera;
 struct Object;
 
 // A container for objects
-class Scene {
-    struct ObjectInstance {
-        size_t objectId;
-        size_t shaderId;
-        Matrix4f transformation;
-        Color color;
+class Scene
+{
+    public:
+        GLuint maxStoredObjects;         // An initial limit of storable objects
+        GLuint maxDrawnObjects;          // An initial limit of drawable objects
+        
+        Object ** storedObjects;         // Library of Objects to use from GPU
+        GLuint nbStoredObjects;          // Number of stored objects
+        
+        GLuint * drawnObjects;           // Indices of objects from library to really draw
+        GLfloat * drawnObjectsColors;    // Color for each drawn object
+        GLfloat * drawnObjectsModels;    // Transformation matrix for each drawn object
+        GLuint * drawnObjectsShaderIDs;  // ID of the shader to use for each drawn object  
+        GLuint nbDrawnObjects;
 
-        ObjectInstance(size_t objectId, size_t shaderId, const Matrix4f& transformation, const Color&color) :
-            objectId(objectId), shaderId(shaderId), transformation(transformation), color(color) {
-        }
-    };
+        GLfloat defaultColor[4];         // Default color for drawn elements
+        GLfloat defaultModel[16];        // Default transformation matrix for drawn elements
+        GLuint defaultShaderID;          // Default shaderID for drawn elements        
+        
+        GLfloat lightPosition[4];        // Position of the light used in shader
+        GLfloat lightPower;              // Power of the light used in shader
 
-    std::vector<Object*> storedObjects; // Library of Objects to use from GPU
-    std::vector<ObjectInstance> drawnObjects;
+	GLuint defaultTextureID;         // Default textureID for drawn elements
+        GLuint * drawnObjectsTexture0IDs; // ID of the texture to use on each drawn object for unit 0
+        GLuint * drawnObjectsTexture1IDs; // ID of the texture to use on each drawn object for unit 1
+        
+        Camera * camera;                 // Camera used to watch the scene
 
-    Color defaultColor; // Default color for drawn elements
-    Matrix4f defaultTransformation; // Default transformation matrix for drawn elements
-    GLuint defaultShaderID; // Default shaderID for drawn elements
-    GLfloat lightPosition[4]; // Position of the light used in shader
-    GLfloat lightPower; // Power of the light used in shader
-public:
-    const static size_t maxStoredObjects = 50; // An initial limit of storable objects
-    const static size_t maxDrawnObjects = 200; // An initial limit of drawable objects
+        Scene();
+        ~Scene();
 
-    Scene();
-    ~Scene();
+        void init();
 
-    Camera camera; // Camera used to watch the scene
+        GLuint storeObject(Object * object);
+        GLuint addObjectToDraw(GLuint indexStoredObject);
 
-    Object& createObject(GLenum primitiveType);
-    GLuint addObjectToDraw(GLuint indexStoredObject);
+        void setDrawnObjectColor(GLuint indexDrawnObject, GLfloat * color);
+        void setDrawnObjectModel(GLuint indexDrawnObject, GLfloat * model);
+        void setDrawnObjectShaderID(GLuint indexDrawnObject, GLuint shaderID);   
+        
+        void setDefaultColor(GLfloat * defaultColor);
+        void setDefaultModel(GLfloat * defaultModel);
+        void setDefaultShaderID(GLuint defaultShaderID);       
+        
+	//Textures
+	void setDefaultTextureID(GLuint defaultTextureID);   
+        void setDrawnObjectTextureID(GLuint indexDrawnObject, GLuint textureUnit, GLuint textureID);
 
-    void setDrawnObjectColor(GLuint indexDrawnObject, const Color &color);
-    void setDrawnObjectModel(GLuint indexDrawnObject, const Matrix4f &model);
-    void setDrawnObjectShaderID(GLuint indexDrawnObject, GLuint shaderID);
+        void setLight(GLfloat * position, GLfloat power);
 
-    void setDefaultColor(const Color &defaultColor);
-    void setDefaultModel(const Matrix4f &defaultModel);
-    void setDefaultShaderID(GLuint defaultShaderID);
+        void setAppearance(GLuint indexDrawnObject);
+        void drawObjectsOfScene();
 
-    void setLight(GLfloat * position, GLfloat power);
-
-    void drawObjectsOfScene();
-private:
-    void setAppearance(const ObjectInstance &);
 };
-
-} // namespace stein
 
 #endif // __SCENE_HPP__

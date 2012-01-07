@@ -12,8 +12,8 @@ in vec2 vertexUvs;
 in vec4 vertexColor;
 
 // Varyings : data to transmit to fragments
-smooth out vec3 position;
-smooth out vec3 normal;
+smooth out vec4 position;
+smooth out vec4 normal;
 smooth out vec2 uvs;
 smooth out vec4 localColor;
 
@@ -24,7 +24,7 @@ void main()
     if (filledData[2]) uvs = vertexUvs;
     if (filledData[3]) localColor = vertexColor;
 
-    gl_Position = projection * view * model * vec4(vertexPosition,1);
+    gl_Position = projection * view * model * vertexPosition;
 }
 
 #endif
