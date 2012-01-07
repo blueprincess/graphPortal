@@ -141,6 +141,10 @@ void Application::initSDLOpenGL()
         // Specifies the size and other options about the window and OpenGL context
      this->drawContext = SDL_SetVideoMode(this->width, this->height, 32, SDL_OPENGL | SDL_FULLSCREEN);
 
+	// Hide Mouse
+
+	SDL_ShowCursor(SDL_DISABLE); 
+
 	// SON
 
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 1024);
